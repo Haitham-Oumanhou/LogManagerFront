@@ -1,0 +1,13 @@
+/* Global styles.css or styles.scss */
+.mat-form-field-infix {
+  width: 100%;
+  text-align: center;
+}
+
+.mat-form-field-wrapper {
+  justify-content: center;
+}
+
+.mat-input-element::placeholder {
+  text-align: center;
+}

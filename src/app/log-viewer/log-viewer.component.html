@@ -1,0 +1,118 @@
+<div class="mat-elevation-z8 mt-10">
+  <div class="filter flex justify-center my-4 gap-80">
+    <mat-form-field appearance="outline" class="w-1/3">
+      <input
+        matInput
+        (keyup)="applyFilter($event)"
+        placeholder="Search by Keywords"
+        class="text-center"
+      />
+    </mat-form-field>
+
+    <button
+      class="bg-custom-purple rounded-2xl h-14 w-32 font-semibold text-teal-50"
+      routerLink="/details"
+    >
+      Go to details
+    </button>
+  </div>
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    matSort
+    matSortActive="timestamp"
+    matSortDirection="desc"
+  >
+    <ng-container matColumnDef="frequency">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        class="font-bold text-base text-red-600 md:text-lg lg:text-xl"
+      >
+        Frequency
+      </th>
+      <td mat-cell *matCellDef="let log">{{ log.frequency }}</td>
+    </ng-container>
+    <ng-container matColumnDef="timestamp">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        class="font-bold text-base md:text-lg lg:text-xl"
+      >
+        Timestamp
+      </th>
+      <td mat-cell *matCellDef="let log">
+        {{ log.timestamp | date : "short" }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="label">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        class="font-bold text-base md:text-lg lg:text-xl"
+      >
+        Label
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let log"
+        [ngClass]="{
+          'text-green-500': log.label === 'INFO',
+          'text-blue-500': log.label === 'DEBUG',
+          'text-yellow-500': log.label === 'WARN',
+          'text-red-500': log.label === 'ERROR'
+        }"
+      >
+        {{ log.label }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="message">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        class="font-bold text-base md:text-lg lg:text-xl"
+      >
+        Message
+      </th>
+      <td mat-cell *matCellDef="let log">{{ log.message }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="service">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        class="font-bold text-base md:text-lg lg:text-xl"
+      >
+        Service
+      </th>
+      <td mat-cell *matCellDef="let log">{{ log.service }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="method_name">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        class="font-bold text-base md:text-lg lg:text-xl"
+      >
+        Method
+      </th>
+      <td mat-cell *matCellDef="let log">{{ log.method_name }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [pageSizeOptions]="[10, 20, 30]"
+    showFirstLastButtons
+  ></mat-paginator>
+</div>
