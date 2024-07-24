@@ -1,27 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { InputTextModule } from 'primeng/inputtext';
-import { LogViewerComponent } from './log-viewer/log-viewer.component';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
-import { MatInputModule } from '@angular/material/input';
+import { LogEntry } from './log-entry';
+import { LogService } from './log.service';
+import { LogStateService } from './log-state.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    RouterOutlet,
-    InputTextModule,
-    LogViewerComponent,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatInputModule,
-  ],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
-  title = 'LogManger';
+export class AppComponent implements OnInit {
+  logEntries: LogEntry[] = [];
+
+  constructor(
+    private logService: LogService,
+    private logStateService: LogStateService
+  ) {}
+
+  ngOnInit(): void {
+    this.logService.getLogEntries().subscribe({
+      next: (logEntry: LogEntry) => {
+        this.logStateService.addLogEntry(logEntry);
+        this.logEntries = this.logStateService.logEntries;
+      },
+      error: (error) => {},
+    });
+  }
 }

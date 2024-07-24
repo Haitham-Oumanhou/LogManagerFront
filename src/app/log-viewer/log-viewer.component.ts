@@ -1,12 +1,15 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+} from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { LogEntry } from '../log-entry';
-import { LogService } from '../log.service';
-import { LogStateService } from '../log-state.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { LogEntry } from '../log-entry';
+import { LogStateService } from '../log-state.service';
+import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
@@ -29,7 +32,7 @@ import { RouterModule } from '@angular/router';
   templateUrl: './log-viewer.component.html',
   styleUrls: ['./log-viewer.component.scss'],
 })
-export class LogViewerComponent implements OnInit, OnDestroy {
+export class LogViewerComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     'frequency',
     'timestamp',
@@ -38,37 +41,24 @@ export class LogViewerComponent implements OnInit, OnDestroy {
     'method_name',
     'message',
   ];
-  dataSource: MatTableDataSource<LogEntry>;
-  private logSubscription!: Subscription;
+
+  
+  dataSource: MatTableDataSource<LogEntry> = new MatTableDataSource<LogEntry>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  constructor(private logStateService: LogStateService) {}
+
+  ngOnInit(): void {
+    this.logStateService.logEntries$.subscribe((logEntries) => {
+      this.dataSource.data = logEntries;
+    });
+  }
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-  }
-
-  constructor(
-    private logService: LogService,
-    private logStateService: LogStateService
-  ) {
-    this.dataSource = new MatTableDataSource<LogEntry>(
-      this.logStateService.logEntries
-    );
-  }
-
-  ngOnInit(): void {
-    this.logSubscription = this.logService
-      .getLogEntries()
-      .subscribe((logEntry: LogEntry) => {
-        this.logStateService.addLogEntry(logEntry)
-        this.dataSource.data = [...this.logStateService.logEntries]
-      });
-  }
-
-  ngOnDestroy(): void {
-    this.logSubscription.unsubscribe();
   }
 
   applyFilter(event: Event) {

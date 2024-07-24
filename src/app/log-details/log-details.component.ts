@@ -1,7 +1,6 @@
 import { Component, inject, Inject, ViewChild } from '@angular/core';
 import { LogService } from '../log.service';
 import { CommonModule } from '@angular/common';
-
 import { LogEntry } from '../log-entry';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -49,7 +48,6 @@ export class DetailsComponent {
   constructor() {
     this.logService.getLogsViaHttpRequest().then((logEntryList: LogEntry[]) => {
       this.httpDatasource.data = logEntryList;
-      console.log(logEntryList);
     });
   }
 

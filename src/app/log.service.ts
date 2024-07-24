@@ -1,10 +1,8 @@
 // src/app/log.service.ts
 import { Inject, Injectable, NgZone, PLATFORM_ID } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { LogEntry } from './log-entry';
-import { promises } from 'dns';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +15,7 @@ export class LogService {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private zone: NgZone,
+    private zone: NgZone
   ) {
     if (isPlatformBrowser(this.platformId)) {
       this.connect();
@@ -38,8 +36,8 @@ export class LogService {
     return this.logSubject.asObservable();
   }
 
-  async getLogsViaHttpRequest(): Promise<LogEntry[]>  {
+  async getLogsViaHttpRequest(): Promise<LogEntry[]> {
     const data = await fetch(this.url);
-    return await data.json() ?? [];
+    return (await data.json()) ?? [];
   }
 }

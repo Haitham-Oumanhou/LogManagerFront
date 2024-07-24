@@ -1,24 +1,27 @@
 import { Injectable } from '@angular/core';
 import { LogEntry } from './log-entry';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LogStateService {
-  private _logEntries: LogEntry[] = [];
+  private _logEntries: BehaviorSubject<LogEntry[]> = new BehaviorSubject<LogEntry[]>([]);
 
-  get logEntries(): LogEntry[] {
-    return this._logEntries;
+  get logEntries$() {
+    return this._logEntries.asObservable();
   }
 
   set logEntries(entries: LogEntry[]) {
-    this._logEntries = entries;
+    this._logEntries.next(entries);
   }
 
   addLogEntry(entry: LogEntry) {
-    if (this._logEntries.length >= 100) {
-      this._logEntries.shift();
+    const currentEntries = this._logEntries.value;
+    if (currentEntries.length >= 100) {
+      currentEntries.shift();
     }
-    this._logEntries.push(entry);
+    currentEntries.push(entry);
+    this._logEntries.next([...currentEntries]);
   }
 }
